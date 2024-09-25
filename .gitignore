@@ -1,0 +1,4 @@
+wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/*.pem
+wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/*.key
+wazuh-docker/multi-node/config/wazuh_indexer_ssl_certs/*.pem
+wazuh-docker/multi-node/config/wazuh_indexer_ssl_certs/*.key

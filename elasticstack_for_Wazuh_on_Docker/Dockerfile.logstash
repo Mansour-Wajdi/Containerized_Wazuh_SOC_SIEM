@@ -1,0 +1,25 @@
+# Use the official Logstash image as the base image
+FROM docker.elastic.co/logstash/logstash:8.14.3
+
+# Install the logstash-output-elasticsearch plugin
+RUN /usr/share/logstash/bin/logstash-plugin install logstash-output-elasticsearch
+
+# Install the logstash-input-opensearch plugin
+RUN /usr/share/logstash/bin/logstash-plugin install logstash-input-opensearch
+
+# Switch to the root user to create directories and download the template
+USER root
+
+# Create directories for templates and certificates
+RUN mkdir -p /etc/logstash/templates /etc/logstash/wazuh-indexer-certs /etc/logstash/elasticsearch-certs \
+    && curl -o /etc/logstash/templates/wazuh.json https://packages.wazuh.com/integrations/elastic/4.x-8.x/dashboards/wz-es-4.x-8.x-template.json
+
+# Copy certificates into the image (ensure you have these certificates in the build context)
+COPY ./certs/wazuh-indexer/root-ca.pem /etc/logstash/wazuh-indexer-certs/
+
+# Set the necessary permissions for the certificates
+RUN chmod -R 755 /etc/logstash/wazuh-indexer-certs/root-ca.pem 
+RUN chmod -R 755 /etc/logstash/templates/wazuh.json 
+
+# Switch back to the logstash user
+USER logstash
